@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  /* 60% — Primary backgrounds */
+  --color-offwhite: #F8FAFC;
+
+  /* 30% — Trust Blue / Indigo (structure, headings, text) */
+  --color-brand-blue: #1E3A8A;
+  --color-brand-indigo: #4F46E5;
+
+  /* 10% — Accent (CTAs, milestones only) */
+  --color-accent-orange: #F97316;
+  --color-accent-teal: #0D9488;
+}

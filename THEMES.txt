@@ -1,0 +1,4 @@
+Element	Recommended Colors	Why it works
+Primary (60%)	Clean White & Off-White (#FFFFFF, #F8FAFC)	Keeps the layout breathable and easy to navigate.
+Secondary (30%)	Deep Trust Blue or Indigo (#1E3A8A, #4F46E5)	Instills professionalism, focus, and academic trust.
+Accent (10%)	Energetic Orange or Teal (#F97316, #0D9488)	Perfect for Call-to-Actions (CTAs) like "Take Assessment" or "Book a Session".
