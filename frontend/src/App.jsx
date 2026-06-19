@@ -1,9 +1,17 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/Landing/LandingPage";
+import RegisterPage from "./pages/Auth/RegisterPage";
+import OtpVerificationPage from "./pages/Auth/OtpVerificationPage";
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-offwhite flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-brand-blue underline">
-        Career Guidance Portal — Tailwind is working ✅
-      </h1>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-otp" element={<OtpVerificationPage />} />
+        {/* /set-pin comes next */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
