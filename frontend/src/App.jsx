@@ -7,6 +7,10 @@ import OnboardingPage from "./pages/Onboarding/OnboardingPage";
 import Layout from "./components/dashboard/Layout";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
 import AssessmentPage from "./pages/Assessment/AssessmentPage";
+import ReportLoadingPage from "./pages/Report/ReportLoadingPage";
+import ReportPage from "./pages/Report/ReportPage";
+import CareerDetailPage from "./pages/Career/CareerDetailPage";
+import CareerTastePage from "./pages/Taste/CareerTastePage";
 
 export default function App() {
   return (
@@ -19,16 +23,17 @@ export default function App() {
         <Route path="/set-pin" element={<SetPinPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Full-screen assessment (no sidebar) */}
+        {/* Full-screen flows (no sidebar) */}
         <Route path="/assessment" element={<AssessmentPage />} />
+        <Route path="/report-loading" element={<ReportLoadingPage />} />
+        <Route path="/career/:id/taste" element={<CareerTastePage />} />
 
         {/* Logged-in app with sidebar */}
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/report" element={<ReportPage />} />
+          <Route path="/career/:id" element={<CareerDetailPage />} />
         </Route>
-
-        {/* Temporary placeholder — real screen built next */}
-        <Route path="/report-loading" element={<div className="p-10">Building your report… (next screen)</div>} />
       </Routes>
     </BrowserRouter>
   );
