@@ -11,6 +11,7 @@ import ReportLoadingPage from "./pages/Report/ReportLoadingPage";
 import ReportPage from "./pages/Report/ReportPage";
 import CareerDetailPage from "./pages/Career/CareerDetailPage";
 import CareerTastePage from "./pages/Taste/CareerTastePage";
+import ChatPage from "./pages/Chat/ChatPage";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/career/:id" element={<CareerDetailPage />} />
+          <Route path="/chat" element={<ChatPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
