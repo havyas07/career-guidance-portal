@@ -27,7 +27,7 @@ const steps = [
     icon: MessageSquare,
     title: "Explore & Ask Anything",
     description:
-      "Taste real careers through simulations and chat 24/7 with your AI mentor — in Hindi or English.",
+      "Taste real careers through simulations and chat 24/7 with your AI mentor.",
   },
 ];
 

@@ -4,7 +4,7 @@ import { GraduationCap, CheckCircle2 } from "lucide-react";
 const benefits = [
   "Personalised AI career guidance",
   "Top 10 career matches in minutes",
-  "Chat 24/7 in Hindi or English",
+  "Chat 24/7 with your AI mentor",
 ];
 
 export default function AuthLayout({ title, subtitle, children }) {

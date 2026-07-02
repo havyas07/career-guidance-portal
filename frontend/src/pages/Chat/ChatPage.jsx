@@ -79,7 +79,7 @@ export default function ChatPage() {
             <p className="font-bold text-brand-blue">AI Career Mentor</p>
             <p className="flex items-center gap-1 text-xs text-accent-teal">
               <span className="h-2 w-2 rounded-full bg-accent-teal" />
-              Online · Hindi &amp; English
+              Online 
             </p>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function ChatPage() {
               Ask me anything about your career
             </h2>
             <p className="mt-1 max-w-sm text-sm text-slate-500">
-              Salaries, streams, colleges, or your own report — in Hindi or English.
+              Salaries, streams, colleges, or your own report
             </p>
             <div className="mt-6 grid w-full max-w-md gap-2 sm:grid-cols-2">
               {starters.map((s) => (
@@ -139,7 +139,7 @@ export default function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your question… (Hindi or English)"
+            placeholder="Type your question…"
             className="max-h-32 flex-1 resize-none rounded-xl border border-slate-200 bg-offwhite px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo"
           />
           <button

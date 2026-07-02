@@ -1,4 +1,5 @@
-import { openai, isAIEnabled, MODEL } from "../config/openai.js";
+import { cohere, isAIEnabled, MODEL } from "../config/ai.js";
+import { safeJsonParse } from "../utils/json.js";
 
 export async function generateReport(req, res) {
   const { name, class_grade, city, answers } = req.body;
@@ -9,7 +10,7 @@ export async function generateReport(req, res) {
 
   // No API key → return a realistic mock so the frontend flow works.
   if (!isAIEnabled) {
-    console.warn("[Next Move] OPENAI_API_KEY not set — returning MOCK report.");
+    console.warn("[Next Move] COHERE_API_KEY not set — returning MOCK report.");
     return res.json({ report: mockReport(name), mock: true });
   }
 
@@ -17,9 +18,9 @@ export async function generateReport(req, res) {
     const report = await buildReportWithAI({ name, class_grade, city, answers });
     return res.json({ report, mock: false });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("Cohere error:", err.message);
     // Graceful fallback — never block the student on an API/billing issue.
-    console.warn("[Next Move] Falling back to MOCK report due to OpenAI error.");
+    console.warn("[Next Move] Falling back to MOCK report due to Cohere error.");
     return res.json({ report: mockReport(name), mock: true });
   }
 }
@@ -58,17 +59,15 @@ ${answersText}
 
 Generate the Career Clarity Report JSON now.`;
 
-  const completion = await openai.chat.completions.create({
+  const response = await cohere.chat({
     model: MODEL,
-    temperature: 0.7,
-    response_format: { type: "json_object" },
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
   });
 
-  return JSON.parse(completion.choices[0].message.content);
+  return safeJsonParse(response.message.content[0].text);
 }
 
 // ── Mock fallback (used only when no API key) ──

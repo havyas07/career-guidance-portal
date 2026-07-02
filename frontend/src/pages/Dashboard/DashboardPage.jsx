@@ -127,7 +127,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="font-semibold text-brand-blue">Ask AI Mentor</p>
-              <p className="text-sm text-slate-500">Career questions, 24/7 in Hindi or English</p>
+              <p className="text-sm text-slate-500">Career questions, 24/7 chat with AI Mentor</p>
             </div>
           </button>
 

@@ -1,4 +1,5 @@
-import { openai, isAIEnabled, MODEL } from "../config/openai.js";
+import { cohere, isAIEnabled, MODEL } from "../config/ai.js";
+import { safeJsonParse } from "../utils/json.js";
 
 export async function generateCareerDetail(req, res) {
   const { career, studentName, class_grade, strengths } = req.body;
@@ -8,7 +9,7 @@ export async function generateCareerDetail(req, res) {
   }
 
   if (!isAIEnabled) {
-    console.warn("[Next Move] No OPENAI_API_KEY — returning MOCK career detail.");
+    console.warn("[Next Move] No COHERE_API_KEY — returning MOCK career detail.");
     return res.json({ detail: mockDetail(career), mock: true });
   }
 
@@ -16,7 +17,7 @@ export async function generateCareerDetail(req, res) {
     const detail = await buildDetailWithAI({ career, studentName, class_grade, strengths });
     return res.json({ detail, mock: false });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("Cohere error:", err.message);
     console.warn("[Next Move] Falling back to MOCK career detail.");
     return res.json({ detail: mockDetail(career), mock: true });
   }
@@ -45,17 +46,15 @@ Student's top strengths: ${strengthsText}.
 
 Generate the career detail JSON now.`;
 
-  const completion = await openai.chat.completions.create({
+  const response = await cohere.chat({
     model: MODEL,
-    temperature: 0.7,
-    response_format: { type: "json_object" },
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
   });
 
-  return JSON.parse(completion.choices[0].message.content);
+  return safeJsonParse(response.message.content[0].text);
 }
 
 // ── Mock fallback (used when no key / on error) ──

@@ -1,4 +1,5 @@
-import { openai, isAIEnabled, MODEL } from "../config/openai.js";
+import { cohere, isAIEnabled, MODEL } from "../config/ai.js";
+import { safeJsonParse } from "../utils/json.js";
 
 // ── 1. Generate the 5 scenario questions ──
 export async function generateScenarios(req, res) {
@@ -8,7 +9,7 @@ export async function generateScenarios(req, res) {
   }
 
   if (!isAIEnabled) {
-    console.warn("[Next Move] No OPENAI_API_KEY — returning MOCK taste scenarios.");
+    console.warn("[Next Move] No COHERE_API_KEY — returning MOCK taste scenarios.");
     return res.json({ taste: mockScenarios(career), mock: true });
   }
 
@@ -16,7 +17,7 @@ export async function generateScenarios(req, res) {
     const taste = await buildScenariosWithAI({ career, studentName, class_grade });
     return res.json({ taste, mock: false });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("Cohere error:", err.message);
     console.warn("[Next Move] Falling back to MOCK taste scenarios.");
     return res.json({ taste: mockScenarios(career), mock: true });
   }
@@ -30,7 +31,7 @@ export async function generateDebrief(req, res) {
   }
 
   if (!isAIEnabled) {
-    console.warn("[Next Move] No OPENAI_API_KEY — returning MOCK debrief.");
+    console.warn("[Next Move] No COHERE_API_KEY — returning MOCK debrief.");
     return res.json({ debrief: mockDebrief(career), mock: true });
   }
 
@@ -38,7 +39,7 @@ export async function generateDebrief(req, res) {
     const debrief = await buildDebriefWithAI({ career, choices });
     return res.json({ debrief, mock: false });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("Cohere error:", err.message);
     console.warn("[Next Move] Falling back to MOCK debrief.");
     return res.json({ debrief: mockDebrief(career), mock: true });
   }
@@ -69,16 +70,14 @@ Exactly 5 scenarios.`;
 Student: ${studentName || "a student"}, Class ${class_grade || "?"}.
 Generate the 5-scenario simulation JSON now.`;
 
-  const completion = await openai.chat.completions.create({
+  const response = await cohere.chat({
     model: MODEL,
-    temperature: 0.8,
-    response_format: { type: "json_object" },
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
   });
-  return JSON.parse(completion.choices[0].message.content);
+  return safeJsonParse(response.message.content[0].text);
 }
 
 async function buildDebriefWithAI({ career, choices }) {
@@ -103,16 +102,14 @@ ${choicesText}
 
 Generate the debrief JSON now.`;
 
-  const completion = await openai.chat.completions.create({
+  const response = await cohere.chat({
     model: MODEL,
-    temperature: 0.7,
-    response_format: { type: "json_object" },
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
   });
-  return JSON.parse(completion.choices[0].message.content);
+  return safeJsonParse(response.message.content[0].text);
 }
 
 // ── Mock fallbacks ──

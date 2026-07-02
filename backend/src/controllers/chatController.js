@@ -1,40 +1,46 @@
-import { openai, isAIEnabled } from "../config/openai.js";
+console.log("🔴 THIS chatController.js IS RUNNING — Cohere version");
 
-const CHAT_MODEL = process.env.OPENAI_CHAT_MODEL || "gpt-4o-mini";
+import { cohere, isAIEnabled, MODEL } from "../config/ai.js";
+
+// Use the same model as the rest of the app (from ai.js / .env)
+const CHAT_MODEL = MODEL;
 
 export async function chat(req, res) {
+  console.log("✅ chat() was called");
   const { messages, student } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
+    console.log("⚠️ no messages in body");
     return res.status(400).json({ error: "messages are required" });
   }
 
   if (!isAIEnabled) {
-    console.warn("[Next Move] No OPENAI_API_KEY — returning MOCK chat reply.");
+    console.warn("[Next Move] No COHERE_API_KEY — returning MOCK chat reply.");
     return res.json({ reply: mockReply(messages), mock: true });
   }
 
+  console.log("🟢 about to call Cohere");
   try {
     const reply = await chatWithAI({ messages, student });
+    console.log("🎉 Cohere replied successfully");
     return res.json({ reply, mock: false });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("Cohere error FULL:", err);
     console.warn("[Next Move] Falling back to MOCK chat reply.");
     return res.json({ reply: mockReply(messages), mock: true });
   }
 }
 
 async function chatWithAI({ messages, student }) {
-  const completion = await openai.chat.completions.create({
+  console.log("→ Chat using model:", CHAT_MODEL);
+  const response = await cohere.chat({
     model: CHAT_MODEL,
-    temperature: 0.7,
     messages: [
       { role: "system", content: buildSystemPrompt(student) },
-      // keep the last ~20 turns for context without bloating tokens
       ...messages.slice(-20),
     ],
   });
-  return completion.choices[0].message.content;
+  return response.message.content[0].text;
 }
 
 function buildSystemPrompt(student) {
@@ -65,7 +71,7 @@ ${context}`;
 // ── Mock fallback (no key / on error) ──
 function mockReply(messages) {
   const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
-  return `Thanks for asking! 🌟 (Demo mode — add an OpenAI key for real AI answers.)
+  return `Thanks for asking! 🌟 (Demo mode — add a Cohere key for real AI answers.)
 
 You said: "${lastUser}"
 

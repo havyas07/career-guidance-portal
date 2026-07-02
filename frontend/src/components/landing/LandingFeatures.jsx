@@ -20,7 +20,7 @@ const features = [
     accent: "orange",
     title: "24/7 AI Chatbot",
     description:
-      "Ask anything about careers, salaries, streams, or colleges — in Hindi or English, any time of day.",
+      "Ask anything about careers, salaries, streams, or colleges —  any time of day.",
   },
   {
     icon: BarChart3,

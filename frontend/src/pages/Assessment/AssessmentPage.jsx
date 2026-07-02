@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { ArrowLeft, RotateCcw, X } from "lucide-react";
 import questions from "../../data/assessmentQuestions";
 import OptionCard from "../../components/ui/OptionCard";
 import {
@@ -32,17 +32,17 @@ export default function AssessmentPage() {
     const updated = { ...answers, [current.id]: value };
     setAnswers(updated);
     saveProgress(updated, index); // autosave immediately
-  };
 
-  const goNext = () => {
-    if (!selected) return;
-    if (isLast) {
-      handleSubmit();
-    } else {
-      const nextIndex = index + 1;
-      setIndex(nextIndex);
-      saveProgress(answers, nextIndex);
-    }
+    // brief pause so the selection is visible, then auto-advance
+    setTimeout(() => {
+      if (isLast) {
+        handleSubmit(updated);
+      } else {
+        const nextIndex = index + 1;
+        setIndex(nextIndex);
+        saveProgress(updated, nextIndex);
+      }
+    }, 280);
   };
 
   const goBack = () => {
@@ -52,9 +52,16 @@ export default function AssessmentPage() {
     saveProgress(answers, prevIndex);
   };
 
-  const handleSubmit = async () => {
+  const handleClear = () => {
+    const updated = { ...answers };
+    delete updated[current.id];
+    setAnswers(updated);
+    saveProgress(updated, index);
+  };
+
+  const handleSubmit = async (finalAnswers) => {
     setSubmitting(true);
-    await submitAssessment(answers);
+    await submitAssessment(finalAnswers);
     navigate("/report-loading");
   };
 
@@ -91,7 +98,9 @@ export default function AssessmentPage() {
           <h1 className="text-2xl font-bold text-brand-blue sm:text-3xl">
             {current.text}
           </h1>
-          <p className="mt-2 text-sm text-slate-500">Choose the option that fits you best.</p>
+          <p className="mt-2 text-sm text-slate-500">
+            Tap an option to continue.
+          </p>
 
           <div className="mt-8 space-y-3">
             {current.options.map((opt) => (
@@ -106,36 +115,45 @@ export default function AssessmentPage() {
         </div>
       </div>
 
-      {/* Footer: back / next */}
+      {/* Footer: back / clear (no Next — selecting auto-advances) */}
       <div className="border-t border-slate-200 bg-white">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
           <button
             onClick={goBack}
-            disabled={index === 0}
+            disabled={index === 0 || submitting}
             className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-              index === 0
+              index === 0 || submitting
                 ? "cursor-not-allowed text-slate-300"
                 : "text-brand-blue hover:bg-offwhite"
             }`}
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            Previous
           </button>
 
           <button
-            onClick={goNext}
+            onClick={handleClear}
             disabled={!selected || submitting}
-            className={`flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-colors ${
-              selected && !submitting
-                ? "bg-accent-orange hover:bg-orange-600"
-                : "cursor-not-allowed bg-slate-300"
+            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
+              !selected || submitting
+                ? "cursor-not-allowed text-slate-300"
+                : "text-brand-blue hover:bg-offwhite"
             }`}
           >
-            {submitting ? "Building your report…" : isLast ? "Finish" : "Next"}
-            {!submitting && <ArrowRight className="h-4 w-4" />}
+            <RotateCcw className="h-4 w-4" />
+            Clear
           </button>
         </div>
       </div>
+
+      {/* Submitting overlay (last question → building report) */}
+      {submitting && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <p className="text-sm font-semibold text-brand-blue">
+            Building your report…
+          </p>
+        </div>
+      )}
     </div>
   );
 }
